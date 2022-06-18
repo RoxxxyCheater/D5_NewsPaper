@@ -1,0 +1,59 @@
+
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %} 
+{% load custom_filters %}
+<!-- Название у нас будет proudcts -->
+{% block title %}
+Newsы
+{% endblock title %}
+ 
+<!-- В контенте на странице мы выводим сам товар, айди которого было передано в адрес -->
+{% block content %}
+<h2>Вы действительно хотите удалить данный пост?</h2>
+<table>
+    <thead>
+        <td>
+            Название статьи
+        </td>
+        <td>
+            Дата публикации                                  
+        </td>
+        <td>
+            Содержимое
+        </td>
+        <td>
+            Автор
+        </td>
+        <td>
+            Категория
+        </td>
+        <td>
+            Рейтинг
+        </td>
+    </thead>
+    <tr>
+        <td>
+            | {{ news.title | multiply:1 }} <!-- применим наш фильтр, чтобы название товара вывелось 1 раза -->
+        </td>
+        <td>
+            | {{ news.created_at | date:'d M Y h:m'  }}
+        </td>
+        <td>
+            | {{ news.content |truncatechars:50 | Censor:'*censored*'}}  <!--дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->
+        </td>
+        <td>
+            | {{ news.author }}
+        </td>
+        <td>
+            | {{ news.category }}
+        </td>
+        <td>
+            | {{ news.postRate }}|
+        </td>
+    </tr>
+</table>
+ 
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Подтвердить удаление"></form>
+{% endblock content %}

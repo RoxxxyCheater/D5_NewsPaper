@@ -1,0 +1,15 @@
+<!--  наследуемся от шаблона default.html, который мы создавали ещё во времена flatpages -->
+{% extends 'flatpages/default.html' %} 
+{% load custom_filters %}
+<!-- Название у нас будет proudcts -->
+{% block title %}
+Newsы
+{% endblock title %}
+ 
+<!-- В контенте на странице мы выводим сам товар, айди которого было передано в адрес -->
+{% block content %}
+
+<h1>{{ news.title | Censor:'*censored*'}}</h1>
+<h3>{{ news.created_at | date:'d M Y h:m' }}</h3>
+<h6>{{ news.content | Censor:'*censored*'}}</h6>
+{% endblock content %}
