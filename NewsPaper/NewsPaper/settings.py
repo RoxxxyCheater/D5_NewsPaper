@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-(!u#ll8sgt_#z)c5@wix7t=pinddv34wx02g)1yrzha+_&dmnd
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = ['127.0.0.1']
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
@@ -45,11 +45,18 @@ INSTALLED_APPS = [
     'news',
     'accounts',
     'django_filters', # получить доступ к фильтрам в приложении.
+    'sign', #приложение регистрации, аутентификации и авторизации
+    'protect', #приложение c представлением для аутентифицированных пользователей. 
 
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # ... include the providers you want to enable:
+    'allauth.socialaccount.providers.google',
 ]
-SITE_ID = 1
+SITE_ID = 1 #SITE_ID используется в случае, если данный проект управляет несколькими сайтами, но для нас сейчас это не является принципиальным. Достаточно явно прописать значение 1 для этой переменной.
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -64,7 +71,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'NewsPaper.urls'
 
-TEMPLATES = [
+TEMPLATES = [ #контекстный процессор
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
@@ -75,9 +82,23 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                #`allauth` needs this from django
+                'django.template.context_processors.request'
             ],
         },
     },
+]
+
+#Далее нам необходимо добавить бэкенды аутентификации как по username, так и специфичную по email или сервис-провайдеру: 
+
+
+AUTHENTICATION_BACKENDS = [
+
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend', # встроенный бэкенд Django, реализующий аутентификацию по username
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend', #бэкенд аутентификации, предоставленный пакетом allauth
 ]
 
 WSGI_APPLICATION = 'NewsPaper.wsgi.application'
@@ -124,7 +145,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOGIN_URL = '/accounts/login/'
 
+LOGIN_REDIRECT_URL = '/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 

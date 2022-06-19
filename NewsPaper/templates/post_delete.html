@@ -33,22 +33,22 @@ Newsы
     </thead>
     <tr>
         <td>
-            | {{ news.title | multiply:1 }} <!-- применим наш фильтр, чтобы название товара вывелось 1 раза -->
+            | {{ post.title | multiply:1 }} <!-- применим наш фильтр, чтобы название товара вывелось 1 раза -->
         </td>
         <td>
-            | {{ news.created_at | date:'d M Y h:m'  }}
+            | {{ post.created_at | date:'d M Y h:m'  }}
         </td>
         <td>
-            | {{ news.content |truncatechars:50 | Censor:'*censored*'}}  <!--дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->
+            | {{ post.content |truncatechars:50 | Censor:'*censored*'}}  <!--дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->
         </td>
         <td>
-            | {{ news.author }}
+            | {{ post.author }}
         </td>
         <td>
-            | {{ news.category }}
+            | {{ post.category }}
         </td>
         <td>
-            | {{ news.postRate }}|
+            | {{ post.postRate }}|
         </td>
     </tr>
 </table>

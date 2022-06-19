@@ -23,7 +23,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
             <div class="container">
-                <a class="navbar-brand" href="#page-top"><img src="../../static/assets/img/navbar-logo.svg" alt="..." /></a>
+                <a class="navbar-brand" href="../"><img src="../../static/assets/img/navbar-logo.svg" alt="..." /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars ms-1"></i>
@@ -35,8 +35,9 @@
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../search/">Search</a></li>
-                        <li class="nav-item"><a class="nav-link" href="../add_news/">Add News</a></li>
+                        <li class="nav-item"><a class="nav-link" href="news/search">Search</a></li>
+                        <li class="nav-item"><a class="nav-link" href="news/add_news/">Add News</a></li>
+                        <li class="nav-item"> <a class="nav-link" href="/sign/logout/">Выйти</a> </li>
                     </ul>
                 </div>
             </div>
@@ -47,7 +48,7 @@
                 <div class="masthead-subheading">Welcome To Our Studio!</div>
                 {% block content %}
                 {% endblock content %}
-                <div class="masthead-heading text-uppercase"><a href="../news/search/">It's Nice To Meet You</a></div>
+                <div class="masthead-heading text-uppercase"><a href="/news/search/">It's Nice To Meet You</a></div>
                 <a class="btn btn-primary btn-xl text-uppercase" href="#services">Tell Me More</a>
             </div>
         </header>
