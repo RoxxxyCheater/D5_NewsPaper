@@ -41,7 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions', # Данное приложение выполняет задачу управления сессиями. 
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # ... include the providers you want to enable:
+    'allauth.socialaccount.providers.google',
     'news',
     'accounts',
     'django_filters', # получить доступ к фильтрам в приложении.
@@ -50,11 +54,7 @@ INSTALLED_APPS = [
 
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    # ... include the providers you want to enable:
-    'allauth.socialaccount.providers.google',
+
 ]
 SITE_ID = 1 #SITE_ID используется в случае, если данный проект управляет несколькими сайтами, но для нас сейчас это не является принципиальным. Достаточно явно прописать значение 1 для этой переменной.
 
@@ -157,3 +157,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ACCOUNT_EMAIL_REQUIRED = True #имейл обязательно
+ACCOUNT_UNIQUE_EMAIL = True # уникальный имейл
+ACCOUNT_USERNAME_REQUIRED = False #username обязательно
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+
+
+# 

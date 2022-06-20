@@ -21,5 +21,6 @@ urlpatterns = [
     path('pages/', include('django.contrib.flatpages.urls')),
     path('news/', include('news.urls')), # делаем так, чтобы все адреса из нашего приложения (simpleapp/urls.py) сами автоматически подключались когда мы их добавим.
     path('', include('protect.urls')), #перенаправление корневой страницы в приложение protect
-    path('sign/', include('sign.urls')) #все страницы, URL которых начинается с sign/, перенаправляем в приложение sign
+    path('sign/', include('sign.urls')), #все страницы, URL которых начинается с sign/, перенаправляем в приложение sign
+    path('accounts/', include('allauth.urls')),
 ]
