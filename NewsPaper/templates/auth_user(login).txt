@@ -38,3 +38,8 @@
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 
 {% endblock %}
+
+Your Client ID
+27352960266-nhh209r2m7dr61m33ngsbbh4ethssf6o.apps.googleusercontent.com
+Your Client Secret
+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

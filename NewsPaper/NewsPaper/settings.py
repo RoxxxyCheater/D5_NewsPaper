@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'django_filters', # получить доступ к фильтрам в приложении.
     'sign', #приложение регистрации, аутентификации и авторизации
     'protect', #приложение c представлением для аутентифицированных пользователей. 
-
     'django.contrib.sites',
     'django.contrib.flatpages',
 
@@ -164,6 +163,4 @@ ACCOUNT_USERNAME_REQUIRED = False #username обязательно
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-
-
-# 
+ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'} #allauth распознал нашу форму как ту, что должна выполняться вместо формы по умолчанию.
