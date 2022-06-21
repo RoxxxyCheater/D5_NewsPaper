@@ -38,6 +38,9 @@
                         <li class="nav-item"><a class="nav-link" href="news/search">Search</a></li>
                         <li class="nav-item"><a class="nav-link" href="news/add_news/">Add News</a></li>
                         <li class="nav-item"> <a class="nav-link" href="/sign/logout/">Выйти</a> </li>
+                        {% if is_not_premium %}
+                        <button> <a href="sign/upgrade/"> Хочу Premium!</a> </button>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
