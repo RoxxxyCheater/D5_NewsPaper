@@ -8,7 +8,7 @@ class IndexView(LoginRequiredMixin, TemplateView): # generic-представл�
 
     def get_context_data(self, **kwargs): #переопределяем метод получения контекста
         context = super().get_context_data(**kwargs) #получили весь контекст из класса-родителя
-        context['is_not_premium'] = not self.request.user.groups.filter(name = 'programmers').exists()
+        context['is_not_authors'] = not self.request.user.groups.filter(name = 'authors').exists()
         #добавили новую контекстную переменную is_no t_premium
         #есть ли пользователь в группе - заходим в переменную запроса self.request/
         #Из этой переменной мы можем вытащить текущего пользователя
