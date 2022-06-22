@@ -66,16 +66,3 @@ The news is in line with the fresh freshness itself. All news / news / are displ
 Developed country page / news / <news id>. On this page, all information about the state. Name, text and date of entry in the format DAY-MESY-GOD LAS: MINUTES.
 
 Written by Censor, a filter that cites unhealthy sex in names and text states.
-
-
-Added profile editing in the view class, added authentication check.
-The necessary settings for the allauth package have been made in the configuration file.
-The configuration file defines an address to redirect to the login page and a redirect address after a successful login.
-Implemented the login form template and configured the URL configuration.
-Implemented user registration page template.
-Implemented the ability to register through a Google account.
-The common and authors groups have been created.
-Implemented automatic addition of new users to the common group.
-Implemented the ability to become an author (to be added to the authors group).
-The authors group has the rights to create and edit Post model objects (news and articles).
-In the classes-views for adding and editing news and articles, a check of access rights has been added.
