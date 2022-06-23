@@ -8,8 +8,8 @@ from datetime import datetime
 from django.views import View # импортируем простую вьюшку
 from .filters import NewsFilter # импортируем фильтр
 from .forms import PostForm # импортируем форму
-
- 
+from django.contrib.auth.mixins import PermissionRequiredMixin #Миксин Ограничение прав доступа
+from django.views.generic.edit import CreateView
  
 class PostList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
@@ -22,6 +22,20 @@ class PostList(ListView):
     def get_context_data(self, **kwargs): # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
         return context    
+    
+    def get_context_data(self, **kwargs): #переопределяем метод получения контекста
+        context = super().get_context_data(**kwargs) #получили весь контекст из класса-родителя
+        context['is_authors'] = self.request.user.groups.filter(name = 'authors').exists()
+        context['user_info'] = self.request.user
+        #добавили новую контекстную переменную is_no t_premium
+        #есть ли пользователь в группе - заходим в переменную запроса self.request/
+        #Из этой переменной мы можем вытащить текущего пользователя
+        #В поле groups хранятся все группы, в которых он состоит
+        #применяем фильтр к этим группам и ищем ту самую, имя которой premium.
+        #проверяем, есть ли какие-то значения в отфильтрованном списке.
+        #Mетод exists() вернёт True, если группа premium в списке групп пользователя найдена
+        #нам нужно получить наоборот — True, если пользователь не находится в этой группе, поэтому добавляем отрицание not
+        return context #возвращаем контекст обратно
 
 
 class PostDetail(DetailView): # адресс в котором будет лежать информация о конкретном товаре
@@ -81,25 +95,60 @@ class PostsView(View):
         return render(request, 'search.html', data)
 
 
-class PostAdd(CreateView):
+class PostAdd(PermissionRequiredMixin, CreateView):
     template_name = 'add_news.html'
     form_class = PostForm
+    permission_required = 'news.add_news'
+    raise_exception = True
 
+    def has_permission(self):
+        user_is_author = self.request.user.groups.filter(name = 'authors').exists()
+        return user_is_author
+
+    
 # дженерик для редактирования объекта
-class PostUpdateView(UpdateView):
+class PostUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'post_update.html'
     form_class = PostForm
+    permission_required = 'news.post_update'
+    raise_exception = True
  
     # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте который мы собираемся редактировать
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
         return Post.objects.get(pk=id)
+    
+    def has_permission(self):
+        has_perms = super().has_permission()
+        self.object = self.get_object()
+        user_is_author = self.request.user.groups.filter(name = 'authors').exists()
+        return has_perms or user_is_author
+
  
  
 # дженерик для удаления товара
-class PostDeleteView(DeleteView):
+class PostDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'post_delete.html'
     queryset = Post.objects.all()
     success_url = '/news/'
+    permission_required = 'news.post_delete'
+    raise_exception = True
+
+    def has_permission(self):
+        has_perms = super().has_permission()
+        self.object = self.get_object()
+        user_is_author = self.request.user.groups.filter(name = 'authors').exists()
+        return has_perms or user_is_author
+
  
- 
+
+#B представлении мы добавляем миксин PermissionRequiredMixin:
+
+
+# class MyView(PermissionRequiredMixin, View):
+#     permission_required = ('news.add_news','news.post_delete', 'news.post_update')
+
+
+# class AddProduct(PermissionRequiredMixin, CreateView):
+#     permission_required = ('news.add_news', 'news.post_delete', 'news.post_update')
+#     #customize form view
