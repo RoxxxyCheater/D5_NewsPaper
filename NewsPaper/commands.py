@@ -102,3 +102,5 @@ commentsBestPost = Comment.objects.filter(post=postId).values('created_at', 'com
 print(commentsBestPost.values())
 ##############################################################################
 #python -m pip install django-filter #Не забываем вписать ‘django_filters’ в INSTALLED_APPS в настройках, чтобы получить доступ к фильтрам в приложении.
+#pip install django-allauth
+#install django
