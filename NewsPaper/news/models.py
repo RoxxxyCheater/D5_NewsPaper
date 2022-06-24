@@ -23,7 +23,8 @@ class Author(models.Model):
 
 class Category(models.Model):
     catName = models.CharField(max_length=255, unique=True)
-
+    subscribers = models.ManyToManyField(User)
+    
     def __str__(self):
         return self.catName
 
@@ -33,6 +34,7 @@ class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     rateComment = models.FloatField(default=0.0)
+    
 
     def __str__(self):
         try:
@@ -56,19 +58,11 @@ class Comment(models.Model):
     def get_absolute_url(self):  # aбсолютный путь для перенаправления запроса
         return f'/news/{self.id}'
 
-class PostCategory(models.Model):
-    post = models.ForeignKey('Post', on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.category
 
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     NEWS = 'NW'
     ARTICLE = 'AR'
-    
-
 
     CATEGORY_CHOICES = (
         (NEWS, 'News'),
@@ -76,15 +70,15 @@ class Post(models.Model):
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
+    postCategory = models.ManyToManyField(Category, through='PostCategory')
     category =  models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=NEWS, verbose_name='TypeNews')
-    postCategory = models.ManyToManyField(Category, through='PostCategory', verbose_name='Category')
     title = models.CharField(max_length=100)
     content = models.TextField(default='content')
     postRate = models.FloatField(default=0.0)
- 
+
 
     def __str__(self):
-        return self.title +'.'+ '\n' + self.content + '\n'
+        return '%s %s %s %s %s %s %s' % (self.created_at, self.author.authors.username, self.author.rateAuthor, self.title, self.content,self.postCategory, self.preview())
     
 
     def like(self):
@@ -100,3 +94,9 @@ class Post(models.Model):
     def get_absolute_url(self):  # aбсолютный путь для перенаправления запроса
         return f'/news/{self.id}' 
     
+class PostCategory(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+    # def __str__(self):
+    #     return self.category

@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-#from allauth.account.forms import SignupForm #импортировали класс формы, который предоставляет allauth
+from allauth.account.forms import SignupForm #импортировали класс формы, который предоставляет allauth
 from django.contrib.auth.models import Group # импортировали модель групп
 
 class BaseRegisterForm(UserCreationForm):
@@ -21,10 +21,10 @@ class BaseRegisterForm(UserCreationForm):
                   "password1", 
                   "password2", )
 
-# class BasicSignupForm(SignupForm):#В кастом классе формы,(добавлять пользователя в группу) переопределяем только метод save(), который выполняется при успешном заполнении формы регистрации.
+class BasicSignupForm(SignupForm):#В кастом классе формы,(добавлять пользователя в группу) переопределяем только метод save(), который выполняется при успешном заполнении формы регистрации.
 
-#     def save(self, request):
-#         user = super(BasicSignupForm, self).save(request) #вызываем метод класса-родителя SignupForm, чтобы необходимые проверки и сохранение в модель User были выполнены.
-#         basic_group = Group.objects.get(name='common') # получаем объект модели группы basic
-#         basic_group.user_set.add(user) # через атрибут user_set, возвращающий список всех пользователей этой группы, мы добавляем нового пользователя в эту группу
-#         return user #Обязательным требованием метода save() является возвращение объекта модели User по итогу выполнения функции.
+    def save(self, request):
+        user = super(BasicSignupForm, self).save(request) #вызываем метод класса-родителя SignupForm, чтобы необходимые проверки и сохранение в модель User были выполнены.
+        basic_group = Group.objects.get(name='common') # получаем объект модели группы basic
+        basic_group.user_set.add(user) # через атрибут user_set, возвращающий список всех пользователей этой группы, мы добавляем нового пользователя в эту группу
+        return user #Обязательным требованием метода save() является возвращение объекта модели User по итогу выполнения функции.

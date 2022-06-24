@@ -59,27 +59,11 @@ class Posts(ListView):
         top_rated = Author.objects.all().order_by('-rateAuthor').values('authors', 'rateAuthor')[0]
         context['value1'] = {User.objects.get(id=list(top_rated.values())[0])}, {list(top_rated.values())[1]} # добавим ещё одну пустую переменную, чтобы на её примере посмотреть работу другого фильтра
         context['filter'] = NewsFilter(self.request.GET, queryset=self.get_queryset()) # вписываем наш фильтр в контекст
-        # context['category'] = Post.category
+        context['category'] = Post.category
+        context['postCategory'] = Post.postCategory
         # context['authors'] = Author.objects.all()
         return context
 
-    # def post(self, request, *args, **kwargs):
-    #     form = self.form_class(request.POST) # создаём новую форму, забиваем в неё данные из POST-запроса 
-    #     print(form)
-    #     if form.is_valid(): # если пользователь ввёл всё правильно и нигде не накосячил, то сохраняем новый товар
-    #         form.save()
- 
-    #     return super().get(request, *args, **kwargs)
-    # def post(self, request, *args, **kwargs):
-    #     # берём значения для нового товара из POST-запроса отправленного на сервер
-    #     author = request.POST.get('authors') # Author = request.POST['authors']
-    #     title= request.POST.get('title')
-    #     postRate = request.POST['postRate'] 
-    #     content = request.POST.get('content')
-    #     posts = Post(author = author, title=title, postRate=postRate, content =content) # создаём новый товар и сохраняем
-        
-    #     posts.save()
-    #     return super().get(request, *args, **kwargs) # отправляем пользователя обратно на GET-запрос.
     
 class PostsView(View):
 
@@ -97,6 +81,7 @@ class PostsView(View):
 
 class PostAdd(PermissionRequiredMixin, CreateView):
     template_name = 'add_news.html'
+
     form_class = PostForm
     permission_required = 'news.add_news'
     raise_exception = True
@@ -105,11 +90,15 @@ class PostAdd(PermissionRequiredMixin, CreateView):
         user_is_author = self.request.user.groups.filter(name = 'authors').exists()
         return user_is_author
 
+    def new_post_to_mail(self, post):
+        pass
+
     
 # дженерик для редактирования объекта
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'post_update.html'
     form_class = PostForm
+    model = Post
     permission_required = 'news.post_update'
     raise_exception = True
  
@@ -152,3 +141,5 @@ class PostDeleteView(PermissionRequiredMixin, DeleteView):
 # class AddProduct(PermissionRequiredMixin, CreateView):
 #     permission_required = ('news.add_news', 'news.post_delete', 'news.post_update')
 #     #customize form view
+
+
