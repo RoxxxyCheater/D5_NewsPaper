@@ -21,42 +21,28 @@ class Author(models.Model):
         self.rateAuthor = _postRate *3 + _commRate
         self.save()
 
+
+
+
+
+
+
+
 class Category(models.Model):
     catName = models.CharField(max_length=255, unique=True)
-    subscribers = models.ManyToManyField(User, through='SubsCategory') #Для соединения Категории и её подписчиков нарешали мост SubsCategory
+    catS_subscribers = models.ManyToManyField(User, through='SubsCategory') #Для соединения Категории и её подписчиков нарешали мост SubsCategory
     
     def __str__(self):
         return f'{self.catName}'
 
-class Comment(models.Model):
-    post = models.ForeignKey('Post', on_delete=models.CASCADE)
-    commAuthor = models.ForeignKey(User,default='Anonymus', on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    rateComment = models.FloatField(default=0.0)
-    
 
-    def __str__(self):
-        try:
-            return self.commentPost.author.authorUser.username 
-        except:
-            return self.commentUser.username 
-            
-    def __str__(self):
-        return self.content
 
-    def like(self):
-        self.rateComment += 1
-        self.save()
-        
-    def dislike(self):
-        self.rateComment -= 1
-        self.save()
-    def preview(self):
-        return self.content[:124] + '...'
 
-    def get_absolute_url(self):  # aбсолютный путь для перенаправления запроса
-        return f'/news/{self.id}'
+
+
+
+
+
 
 
 class Post(models.Model):
@@ -94,6 +80,38 @@ class Post(models.Model):
     def get_absolute_url(self):  # aбсолютный путь для перенаправления запроса
         return f'/news/{self.id}' 
     
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    commAuthor = models.ForeignKey(User,default='Anonymus', on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    rateComment = models.FloatField(default=0.0)
+    
+
+    def __str__(self):
+        try:
+            return self.commentPost.author.authorUser.username 
+        except:
+            return self.commentUser.username 
+            
+    def __str__(self):
+        return self.content
+
+    def like(self):
+        self.rateComment += 1
+        self.save()
+        
+    def dislike(self):
+        self.rateComment -= 1
+        self.save()
+    def preview(self):
+        return self.content[:124] + '...'
+
+    def get_absolute_url(self):  # aбсолютный путь для перенаправления запроса
+        return f'/news/{self.id}'
+
+
+
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

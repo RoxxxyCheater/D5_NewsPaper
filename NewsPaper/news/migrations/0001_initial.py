@@ -61,7 +61,7 @@ class Migration(migrations.Migration):
                 ('content', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('rateComment', models.FloatField(default=0.0)),
-                ('commAutor', models.ForeignKey(default='Anonymus', on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('commAuthor', models.ForeignKey(default='Anonymus', on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='news.post')),
             ],
         ),

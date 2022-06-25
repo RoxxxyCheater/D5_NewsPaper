@@ -103,6 +103,7 @@ class PostAdd(PermissionRequiredMixin, CreateView):
     permission_required = 'news.add_news'
     raise_exception = True
 
+
     def has_permission(self):
         user_is_author = self.request.user.groups.filter(name = 'authors').exists()
         return user_is_author
@@ -118,7 +119,7 @@ class PostUpdateView(PermissionRequiredMixin, UpdateView):
     model = Post
     permission_required = 'news.post_update'
     raise_exception = True
- 
+
     # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте который мы собираемся редактировать
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
