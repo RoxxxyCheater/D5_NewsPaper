@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView,CreateView,UpdateView, Del
 from django.core.paginator import Paginator # импортируем класс, позволяющий удобно осуществлять постраничный вывод
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin #проверка используется для того, чтобы разрешить доступ к странице, которая доступна только для зарегистрированных пользователей.
-from .models import Post,Author
+from .models import Post,Author,Category, PostCategory
 from datetime import datetime
 from django.views import View # импортируем простую вьюшку
 from .filters import NewsFilter # импортируем фильтр
@@ -51,7 +51,7 @@ class Posts(ListView):
     paginate_by = 50
     ordering = ['-postRate']
     form_class = PostForm
-
+ 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (полиморфизм)
@@ -60,23 +60,40 @@ class Posts(ListView):
         context['value1'] = {User.objects.get(id=list(top_rated.values())[0])}, {list(top_rated.values())[1]} # добавим ещё одну пустую переменную, чтобы на её примере посмотреть работу другого фильтра
         context['filter'] = NewsFilter(self.request.GET, queryset=self.get_queryset()) # вписываем наш фильтр в контекст
         context['category'] = Post.category
-        context['postCategory'] = Post.postCategory
-        # context['authors'] = Author.objects.all()
+        context['category_none']  = False
+        # if self.request.method is not None:
+        #     context['category_none']  = True
+        # context['postCategory'] = Category.objects.filter(id = self.request.GET['postCategory']).first #Post.postCategory.name
+        if self.request.GET.get('postCategory') is not None:
+            context['category_none']  = True
+            context['postCategory'] = Category.objects.filter(id = self.request.GET['postCategory']).first
+            # context['postCategorys'] = PostCategory.objects.get(self.request.id) #Post.postCategory.name
+            # context['authors'] = Author.objects.all()
+            
         return context
 
-    
+
 class PostsView(View):
 
-     def get(self, request):
+    def get(self, request):
         posts = Post.objects.order_by('-postRate')
         paginator = Paginator(posts, 3) # создаём объект класса пагинатор, передаём ему список наших товаров и их количество для одной страницы
         posts = paginator.get_page(request.GET.get('page', 1))  #берём номер страницы из get-запроса. Если ничего не передали, будем показывать первую страницу.
-        # теперь вместо всех объектов в списке товаров хранится только нужная нам страница с товарами
+        
+        # теперь вместо всех объектов в списке товаров хранится только нужная нам страница с товарами 
         data = {
             'posts': posts,
         }
         #return render(request, 'news/post_list.html', data)
         return render(request, 'search.html', data)
+    
+    # def get_dropdown(self,request):
+    #     if request.method == 'POST':
+    #         category_form = PostForm(category_form = request.POST)
+    #         if category_form.is_valid():
+    #             cdata = category_form.cleaned_data.get
+    #         selected_category = request.GET['dropdown']
+    #         return selected_category
 
 
 class PostAdd(PermissionRequiredMixin, CreateView):

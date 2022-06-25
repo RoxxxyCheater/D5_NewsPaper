@@ -11,7 +11,7 @@ Newsы
 
 <h1>{{ news.title | Censor:'*censored*'}}</h1>
 <h3>{{ news.created_at | date:'d M Y h:m' }}</h3>
-<h4><a href="/">Subscribe {{ news.postCategory }} category</a></h4>
+<h4><a href="/">Subscribe {{ form }} category</a></h4>
 <h6>{{ news.content | Censor:'*censored*'}}</h6>
 <h6>{{ news.postCategory }}</h6>
 {% endblock content %}

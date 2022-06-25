@@ -23,10 +23,10 @@ class Author(models.Model):
 
 class Category(models.Model):
     catName = models.CharField(max_length=255, unique=True)
-    subscribers = models.ManyToManyField(User)
+    subscribers = models.ManyToManyField(User, through='SubsCategory') #Для соединения Категории и её подписчиков нарешали мост SubsCategory
     
     def __str__(self):
-        return self.catName
+        return f'{self.catName}'
 
 class Comment(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
@@ -78,7 +78,7 @@ class Post(models.Model):
 
 
     def __str__(self):
-        return '%s %s %s %s %s %s %s' % (self.created_at, self.author.authors.username, self.author.rateAuthor, self.title, self.content,self.postCategory, self.preview())
+        return '%s %s %s %s %s %s' % (self.created_at, self.author.authors.username, self.author.rateAuthor, self.title, self.content, self.preview())
     
 
     def like(self):
@@ -99,4 +99,8 @@ class PostCategory(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     # def __str__(self):
-    #     return self.category
+    #     return self.category.catName
+
+class SubsCategory(models.Model): # Мост соеденяющий Категорию и подписоту на эту категорию
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    subscribers = models.ForeignKey(User, on_delete=models.CASCADE)
