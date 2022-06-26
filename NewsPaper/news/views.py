@@ -3,13 +3,14 @@ from django.views.generic import ListView, DetailView,CreateView,UpdateView, Del
 from django.core.paginator import Paginator # импортируем класс, позволяющий удобно осуществлять постраничный вывод
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin #проверка используется для того, чтобы разрешить доступ к странице, которая доступна только для зарегистрированных пользователей.
-from .models import Post,Author,Category, PostCategory
+from .models import Post,Author,Category, PostCategory, SubsCategory
 from datetime import datetime
 from django.views import View # импортируем простую вьюшку
 from .filters import NewsFilter # импортируем фильтр
 from .forms import PostForm # импортируем форму
 from django.contrib.auth.mixins import PermissionRequiredMixin #Миксин Ограничение прав доступа
 from django.views.generic.edit import CreateView
+from django.shortcuts import redirect
  
 class PostList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
@@ -71,6 +72,16 @@ class Posts(ListView):
             # context['authors'] = Author.objects.all()
             
         return context
+    
+    def post(self, request, *args, **kwargs):
+        # берём значения для нового товара из POST-запроса отправленного на сервер
+        PostCategory = request.GET.get('postCategory')
+        User = request.user
+        subscribe_category = Category.objects.get(id = PostCategory) # создаём новый товар и сохраняем
+        subscribe_category.catS_subscribers.add(User)
+        subscribe_category.save()
+        return redirect('/news')# отправляем пользователя обратно на GET-запрос.
+    
 
 
 class PostsView(View):
@@ -86,6 +97,9 @@ class PostsView(View):
         }
         #return render(request, 'news/post_list.html', data)
         return render(request, 'search.html', data)
+    
+
+
     
     # def get_dropdown(self,request):
     #     if request.method == 'POST':

@@ -9,7 +9,8 @@ News
 {% block content %}
     <h1>Поиск по новостям</h1>
     <h3>Всего статей: {{ search | length }}</h3>
-    {% if category_none %}<h4><a href="/">Subscribe {{ postCategory }} category</a></h4>{% endif %}
+    {% if category_none %}<h4><form method="POST">{% csrf_token %}<input type="submit" value="Subscribe"> {{ postCategory }} category</form></h4>{% endif %}
+    <h4>Темп: {{ request.user }}</h4>
     <h5>{{ time_now|date:'d M Y' }}</h5> <!-- Здесь мы применяем фильтр date. Он очень похож на метод strftime у даты. С его помощью мы можем выводить дату в нужном нам формате -->
     
     
@@ -68,12 +69,10 @@ News
                     <td>
                         | {{ news.category }}
                     </td>
-                    <td>
+                    <!-- <td>
                         | {{ news.postCategory }}
-                    </td>
-                    <td>
-                        | {{ postCategorys }}
-                    </td>
+                    </td> -->
+
                     <td>
                         | {{ news.postRate }}|
                     </td>
