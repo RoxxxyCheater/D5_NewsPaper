@@ -19,3 +19,14 @@
 </form>
 <button> <a href="/sign/signup"> Регистрация </a></button>
 {% endblock %}
+
+{% if category_none and user_unsubscribed %}
+<h4><form method="POST">
+{% csrf_token %}
+<input type="hidden" name="submit" value="Subscribe">{{ postCategory }} category</form></h4>
+{% endif %}
+{%  if category_none and not user_unsubscribed %}
+<h4><form method="POST">
+{% csrf_token %}
+<input type="hidden" name="submit" value="Unsubscribe">{{ postCategory }} category</form></h4>
+{% endif %}

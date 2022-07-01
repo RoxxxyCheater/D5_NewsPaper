@@ -92,6 +92,7 @@ bestPost = Post.objects.all().order_by('-postRate').values('created_at', 'author
 dateAdd = list(bestPost.values())[0]
 author = list(bestPost.values())[1]
 username = User.objects.get(id=author)
+nnuzyzfttepwtiln
 rating = list(bestPost.values())[2]
 title = list(bestPost.values())[3]
 postId = list(bestPost.values())[4]

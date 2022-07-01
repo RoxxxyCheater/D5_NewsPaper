@@ -82,7 +82,7 @@ class Post(models.Model):
     
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    commAuthor = models.ForeignKey(User,default='Anonymus', on_delete=models.CASCADE)
+    commAuthor = models.ForeignKey(User,default='Guest ', on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     rateComment = models.FloatField(default=0.0)
@@ -122,3 +122,13 @@ class PostCategory(models.Model):
 class SubsCategory(models.Model): # Мост соеденяющий Категорию и подписоту на эту категорию
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     subscribers = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+
+class SubscribersMail(models.Model): # модель записи - сообщение от пользователя, его имя и дата записи
+    client_title = models.CharField(max_length=200)
+    message = models.TextField(default='message_none')
+    category = models.TextField(default='category_none')
+    subscriber = models.TextField(default='subscriber_none')
+    def __str__(self):
+        return f'{self.client_title}: {self.message}'
