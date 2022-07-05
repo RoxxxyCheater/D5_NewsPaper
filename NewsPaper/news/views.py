@@ -15,7 +15,8 @@ from django.views.generic.edit import CreateView
 from django.core.mail import EmailMultiAlternatives # импортируем класс для создание объекта письма с html 
 from django.template.loader import render_to_string # импортируем функцию, которая срендерит наш html в текст
 from .models import SubscribersMail
- 
+from .exception import *
+
 class PostList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
     template_name = 'news_all.html'  # указываем имя шаблона, в котором будет лежать HTML, в нём будут все инструкции о том, как именно пользователю должны вывестись наши объекты
@@ -89,11 +90,15 @@ class Posts(ListView):
         PostCategory = request.GET.get('postCategory')
         active_user = request.user #получаем юзера из реквеста
         subscribe_category = Category.objects.get(id = PostCategory) # получаем категорию
-        if active_user.username not in subscribe_category.catS_subscribers.values(): # если юзера нет в списке подписчиков
-            subscribe_category.catS_subscribers.add(active_user) #добавляем юзера
-        else:
-            a = subscribe_category.catS_subscribers.get(id=4)
-            a.delete()
+        try:
+            if active_user not in (subscribe_category.catS_subscribers.all()):
+                subscribe_category.catS_subscribers.add(active_user) #добавляем юзера
+            elif active_user in (subscribe_category.catS_subscribers.all()):
+                subscribe_category.catS_subscribers.remove(active_user)
+            else:
+                raise Exception.UserSubscribNotFound
+        except Exception.UserSubscribNotFound:
+            print('!!!!!!!!!!!!!!!!!!!!!!Ошибка запроса!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         subscribe_category.save()
         return redirect('/news/search')# отправляем пользователя обратно на GET-запрос.
     
@@ -126,22 +131,19 @@ class PostAdd(PermissionRequiredMixin, CreateView):
         return user_is_author
         
     def post(self, request, *args, **kwargs): # сохраняем запрос
-        subscribers_emails = [] #SubsCategory.objects.filter(category_id = request.POST['postCategory']).values('subscribers_id')
-        subscribers_username = []
-        list_subscribers = SubsCategory.objects.filter(category_id = request.POST['postCategory']).values()
-        for user in list_subscribers:
-            subscribers_username.append(((User.objects.filter(id=list(user.values())[2])).first()).username)
-            subscribers_emails.append(((User.objects.filter(id=list(user.values())[2])).first()).email)
+        postCats=request.POST['postCategory']        
+        subscribersId = SubsCategory.objects.filter(category = postCats).values('subscribers')
+        mail_title = request.POST['title']
+        mail_text = request.POST['content']
+        for userID in subscribersId:
+            SubsUser = User.objects.get(id = userID['subscribers'])
         
-        for recipient_id in range(len(subscribers_username)):
             newMailSub = SubscribersMail(
-                client_title = request.POST['title'],
-                message= request.POST['content'],
-                category =  Category.objects.filter(id = request.POST['postCategory']).value(),
-                subscriber = subscribers_username[recipient_id]
+                client_title = mail_title,
+                message= mail_text,
+                category =  Category.objects.filter(id = postCats),
+                subscriber = SubsUser.username
             )
-                # category = Category.objects.get(id = request.POST['postCategory']), 
-                # client_username = request.user,
 
             newMailSub.save()
 
@@ -158,7 +160,7 @@ class PostAdd(PermissionRequiredMixin, CreateView):
                 subject=f'Здравствуй, {newMailSub.subscriber}. Новая статья в твоём любимом разделе {newMailSub.category} - {newMailSub.client_title}!',
                 body = newMailSub.message, #  это то же, что и message
                 from_email='lexinet3g@gamil.com',
-                to=[subscribers_emails[recipient_id]], # это то же, что и recipients_list
+                to=[SubsUser.email], # это то же, что и recipients_list
                 #fail_silently=False нуен что бы всё не полетело в тартарары если что-то пошло не так - обязательно в продакшене
             )
             msg.attach_alternative(html_content, "text/html") # добавляем html
