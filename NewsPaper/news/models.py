@@ -130,5 +130,6 @@ class SubscribersMail(models.Model): # модель записи - сообще�
     message = models.TextField(default='message_none')
     category = models.TextField(default='category_none')
     subscriber = models.TextField(default='subscriber_none')
+    subscriber_email = models.TextField(default='support@gmail.com')
     def __str__(self):
         return f'{self.client_title}: {self.message}'

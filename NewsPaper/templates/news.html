@@ -10,8 +10,22 @@ Newsы
 {% block content %}
 
 <h1>{{ news.title | Censor:'*censored*'}}</h1>
+{% if category_none and user_unsubscribed %}
+    <h4><form method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Subscribe"> {{ news.postCategory }} category</form></h4>
+        {% endif %}
+    {% if category_none and not user_unsubscribed %}
+    <h4><form method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Unsubscribe"> {{ news.postCategory }} category</form></h4>
+        {% endif %}
+    <h4>Активный пользователь: {{ request.user }} не подписан на категорию {{ postCategory }} - {{user_unsubscribed}}</h4>
+    {% if category_subscribers_is%}
+    <h4>Subscribers: {{subscribers}}</h4>
+    <h4>Subscribers email: {{subscribers_email}}</h4>
+    {% endif %}
 <h3>{{ news.created_at | date:'d M Y h:m' }}</h3>
 <h4><a href="/">Subscribe {{ form }} category</a></h4>
 <h6>{{ news.content | Censor:'*censored*'}}</h6>
-<h6>{{ news.postCategory }}</h6>
 {% endblock content %}

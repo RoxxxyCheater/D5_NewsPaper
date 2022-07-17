@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-(!u#ll8sgt_#z)c5@wix7t=pinddv34wx02g)1yrzha+_&dmnd
 DEBUG = True
 
 ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1']
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
@@ -36,7 +36,6 @@ STATICFILES_DIRS = [
 
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'django.contrib.auth', # поддержка авторизации реализуется в виде приложения, автоматически подключаемого к каждому новому проекту
     'django.contrib.contenttypes',
     'django.contrib.sessions', # Данное приложение выполняет задачу управления сессиями. 
     'django.contrib.messages',
@@ -53,6 +52,7 @@ INSTALLED_APPS = [
     'protect', #приложение c представлением для аутентифицированных пользователей. 
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'django.contrib.auth', # поддержка авторизации реализуется в виде приложения, автоматически подключаемого к каждому новому проекту
     # 'allauth.socialaccount.providers.agave',
     # 'allauth.socialaccount.providers.amazon',
     # 'allauth.socialaccount.providers.amazon_cognito',
@@ -183,6 +183,9 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 180
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -287,16 +290,16 @@ ACCOUNT_EMAIL_REQUIRED = True #имейл обязательно
 ACCOUNT_UNIQUE_EMAIL = True # уникальный имейл
 ACCOUNT_USERNAME_REQUIRED = False #username обязательно
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = LOGIN_REDIRECT_URL
 ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'} #allauth распознал нашу форму как ту, что должна выполняться вместо формы по умолчанию.
-
-
+ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX ="[http://127.0.0.1:8000/news/] " 
 
 EMAIL_HOST = 'smtp.gmail.com' # адрес сервера Яндекс-почты для всех один и тот же
 EMAIL_PORT = 465 # порт smtp сервера тоже одинаковый
 EMAIL_HOST_USER = 'lexinet3g' # ваше имя пользователя, например если ваша почта user@yandex.ru, то сюда надо писать user, иными словами, это всё то что идёт до собаки
-EMAIL_HOST_PASSWORD = '' # пароль от почты
+EMAIL_HOST_PASSWORD = 'nnuzyzfttepwtiln' # пароль от почты
 EMAIL_USE_SSL = True # Яндекс использует ssl, подробнее о том, что это, почитайте на Википедии, но включать его здесь обязательно
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = 'lexinet3g@gmail.com' # здесь указываем уже свою ПОЛНУЮ почту с которой будут отправляться письма 

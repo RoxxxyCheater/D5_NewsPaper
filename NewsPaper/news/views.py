@@ -1,12 +1,15 @@
+from email import message
 from genericpath import exists
+from hashlib import new
 from unicodedata import category
 from django.shortcuts import render, reverse, redirect
 from django.views.generic import ListView, DetailView,CreateView,UpdateView, DeleteView # импортируем класс, который говорит нам о том, что в этом представлении мы будем выводить список объектов из БД
 from django.core.paginator import Paginator # импортируем класс, позволяющий удобно осуществлять постраничный вывод
 from django.contrib.auth.models import User
-from django.contrib.auth.mixins import LoginRequiredMixin #проверка используется для того, чтобы разрешить доступ к странице, которая доступна только для зарегистрированных пользователей.
+from django.contrib.auth.mixins import LoginRequiredMixin
+from requests import request #проверка используется для того, чтобы разрешить доступ к странице, которая доступна только для зарегистрированных пользователей.
 from .models import Post,Author,Category, PostCategory, SubsCategory
-from datetime import datetime
+from datetime import date , datetime
 from django.views import View # импортируем простую вьюшку
 from .filters import NewsFilter # импортируем фильтр
 from .forms import PostForm # импортируем форму
@@ -16,6 +19,8 @@ from django.core.mail import EmailMultiAlternatives # импортируем к�
 from django.template.loader import render_to_string # импортируем функцию, которая срендерит наш html в текст
 from .models import SubscribersMail
 from .exception import *
+
+
 
 class PostList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
@@ -33,7 +38,7 @@ class PostList(ListView):
         context = super().get_context_data(**kwargs) #получили весь контекст из класса-родителя
         context['is_authors'] = self.request.user.groups.filter(name = 'authors').exists()
         context['user_info'] = self.request.user
-        #добавили новую контекстную переменную is_no t_premium
+        #добавили новую контекстную переменную is_authors
         #есть ли пользователь в группе - заходим в переменную запроса self.request/
         #Из этой переменной мы можем вытащить текущего пользователя
         #В поле groups хранятся все группы, в которых он состоит
@@ -48,6 +53,33 @@ class PostDetail(DetailView): # адресс в котором будет леж
     model = Post
     template_name ='news.html'
     context_object_name = 'news'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (полиморфизм)
+        # context['time_now'] = datetime.utcnow() # добавим переменную текущей даты time_now
+        top_rated = Author.objects.all().order_by('-rateAuthor').values('authors', 'rateAuthor')[0]
+        context['value1'] = {(User.objects.get(id=list(top_rated.values())[0])).username}, {list(top_rated.values())[1]} # добавим ещё одну пустую переменную, чтобы на её примере посмотреть работу другого фильтра
+        context['filter'] = NewsFilter(self.request.GET, queryset=self.get_queryset()) # вписываем наш фильтр в контекст
+        context['category'] = Post.category
+        context['category_none'] = False
+        context['category_subscribers_is']  = False
+        if self.request.GET.get('postCategory') is not None:
+            context['category_none']  = True
+            context['postCategory'] = Category.objects.filter(id = self.request.GET['postCategory']).first
+            if Category.objects.get(id = self.request.GET['postCategory']) is not None: #DoesNotExist
+                context['category_subscribers_is']  = True
+                context['subscribers'] = []
+                context['subscribers_email'] = []
+                list_subscribers = SubsCategory.objects.filter(category_id = self.request.GET['postCategory']).values()
+                for user in list_subscribers.values():
+                    context['subscribers'].append(((User.objects.filter(id=list(user.values())[2])).first()).username)
+                    context['subscribers_email'].append(((User.objects.filter(id=list(user.values())[2])).first()).email)
+                context['user_unsubscribed'] = False if self.request.user.username in context['subscribers'] else True
+                context['subscribe_user_obj'] = (Category.objects.get(id = self.request.GET['postCategory'])).catS_subscribers.values()
+                context['authors'] = Author.objects.all()
+            
+        return context
 
 
 class Posts(ListView):
@@ -129,45 +161,73 @@ class PostAdd(PermissionRequiredMixin, CreateView):
     def has_permission(self):
         user_is_author = self.request.user.groups.filter(name = 'authors').exists()
         return user_is_author
+    
+    def author_add(self, request):
+        if request.method == 'POST':
+            new_author = Author(authors =User.objects.get(username=request.POST.get('username')))
+
+        print(self,request, )
+        return new_author
         
     def post(self, request, *args, **kwargs): # сохраняем запрос
-        postCats=request.POST['postCategory']        
+        #author_add()
+        
+        postCats=request.POST['postCategory']
         subscribersId = SubsCategory.objects.filter(category = postCats).values('subscribers')
         mail_title = request.POST['title']
         mail_text = request.POST['content']
+        category = Category.objects.filter(id = postCats).first()
+        #Для лимита в три поста #datetime.date.today()+datetime.timedelta(days=-datetime.date.today().weekday()) 
+        user_posts = Post.objects.filter(created_at__gte = date.today())
+        print('WWWWWWWWWWWWWWW - user_posts: ', len(user_posts),user_posts)
+        if len(user_posts) > 3: #лимит в три новости в день на автора
+            return redirect('/news/search')# отправляем пользователя обратно на GET-запрос.
+        else:
+            post_save_request = super().post(request, *args, **kwargs)
+        #вытянуть все посты юзера
+        #last_posts = list(user_posts)[:3].sort()
+        #print('@@@@@!!!!!!!!!!!!last_posts: ',last_posts)
+        #отсортировать по свежести
+        #если есть новее суток
+        #вернуть тру или фолс если меньше трёх ничего
+        #else отменить сохранение
+        #
+        #
+
         for userID in subscribersId:
             SubsUser = User.objects.get(id = userID['subscribers'])
-        
+            print(SubsUser)
             newMailSub = SubscribersMail(
                 client_title = mail_title,
                 message= mail_text,
-                category =  Category.objects.filter(id = postCats),
-                subscriber = SubsUser.username
+                category =  category,
+                subscriber = SubsUser.username,
+                subscriber_email = SubsUser.email
             )
-
+            #print('@@@@',newMailSub, '@@@@', newMailSub.client_title, '@@@@', newMailSub.message, '@@@@', newMailSub.category, '@@@@', newMailSub.subscriber, '@@@@', newMailSub.subscriber_email)
             newMailSub.save()
 
-            # получем наш html
-            html_content = render_to_string( 
-                'subs_mail_created.html',
-                {
-                    'newMailSub': newMailSub,
-                }
-            )
+            # # получем наш html
+            # html_content = render_to_string( 
+            #     'subs_mail_created.html',
+            #     {
+            #         'newMailSub': newMailSub,
+            #     }
+            # )
     
-            # в конструкторе уже знакомые нам параметры, да? Называются правда немного по другому, но суть та же.
-            msg = EmailMultiAlternatives(
-                subject=f'Здравствуй, {newMailSub.subscriber}. Новая статья в твоём любимом разделе {newMailSub.category} - {newMailSub.client_title}!',
-                body = newMailSub.message, #  это то же, что и message
-                from_email='lexinet3g@gamil.com',
-                to=[SubsUser.email], # это то же, что и recipients_list
-                #fail_silently=False нуен что бы всё не полетело в тартарары если что-то пошло не так - обязательно в продакшене
-            )
-            msg.attach_alternative(html_content, "text/html") # добавляем html
+            # # в конструкторе уже знакомые нам параметры, да? Называются правда немного по другому, но суть та же.
+            # msg = EmailMultiAlternatives(
+            #     subject=f'Здравствуй, {newMailSub.subscriber}. Новая статья в твоём любимом разделе {newMailSub.category} - {newMailSub.client_title}!',
+            #     body = newMailSub.message, #  это то же, что и message
+            #     from_email='lexinet3g@gamil.com',
+            #     to=[SubsUser.email], # это то же, что и recipients_list
+            #     #fail_silently=False нуен что бы всё не полетело в тартарары если что-то пошло не так - обязательно в продакшене
+            # )
+            # msg.attach_alternative(html_content, "text/html") # добавляем html
 
-            msg.send() # отсылаем
+            # msg.send() # отсылаем
     
-        return redirect('/news')
+        return post_save_request
 
 # дженерик для редактирования объекта
 class PostUpdateView(PermissionRequiredMixin, UpdateView):
@@ -209,57 +269,5 @@ class PostDeleteView(PermissionRequiredMixin, DeleteView):
 
 
  
-# class SubscribersMailView(View): #get возвращает шаблон в котором заполняется форма
-#     def get(self, request, *args, **kwargs): 
-#         return render(request, 'add_news.html', {}) 
-
-#     def post(self, request, *args, **kwargs): # сохраняем запрос
-#         newMailSub = SubscribersMail(
-#             category = Category.objects.get(id = request.GET.get('postCategory')), 
-#             client_username = request.user,
-#             title = request.title,
-#             message= request.content,
-#         )
-#         newMailSub.save()
-
-#         # получем наш html
-#         html_content = render_to_string( 
-#             'subs_mail_created.html',
-#             {
-#                 'newMailSub': newMailSub,
-#             }
-#         )
- 
-#         # в конструкторе уже знакомые нам параметры, да? Называются правда немного по другому, но суть та же.
-#         msg = EmailMultiAlternatives(
-#             subject=f'{newMailSub.client_username}, новый пост из категории {newMailSub.category}: {newMailSub.title}',
-#             body = newMailSub.message, #  это то же, что и message
-#             from_email='lexinet3g@gamil.com',
-#             to=['sayt@3g.ua'], # это то же, что и recipients_list
-#             #fail_silently=False нуен что бы всё не полетело в тартарары если что-то пошло не так - обязательно в продакшене
-#         )
-#         msg.attach_alternative(html_content, "text/html") # добавляем html
-
-#         msg.send() # отсылаем
- 
-#         return redirect('/news')
- 
-
-
-
-
-
-
-
-#B представлении мы добавляем миксин PermissionRequiredMixin:
-
-
-# class MyView(PermissionRequiredMixin, View):
-#     permission_required = ('news.add_news','news.post_delete', 'news.post_update')
-
-
-# class AddProduct(PermissionRequiredMixin, CreateView):
-#     permission_required = ('news.add_news', 'news.post_delete', 'news.post_update')
-#     #customize form view
 
 
