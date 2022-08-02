@@ -15,3 +15,8 @@
         Кнопка «Выйти» есть только на странице авторизованных пользователей.
         При её нажатии выполняется представление LogoutView, которое «разлогинит» пользователя и сформирует страницу по шаблону sign/logout.html.
 (env) $ pip install django-allauth
+
+SECRET_KEY = 'django-insecure-(!u#ll8sgt_#z)c5@wix7t=pinddv34wx02g)1yrzha+_&dmnd'
+EMAIL_HOST_PASSWORD = 'nnuzyzfttepwtiln'
+DEFAULT_FROM_EMAIL = 'lexinet3g@gmail.com'
+EMAIL_HOST_USER = 'lexinet3g'

@@ -105,3 +105,8 @@ print(commentsBestPost.values())
 #python -m pip install django-filter #Не забываем вписать ‘django_filters’ в INSTALLED_APPS в настройках, чтобы получить доступ к фильтрам в приложении.
 #pip install django-allauth
 #install django
+#pip install django-apscheduler # tasks_automatically
+# from fuzzywuzzy import fuzzy as fuz: библиотека для неточного сравнения текста для AI автоответчика
+#QT библиотека!
+#выбрать посты за неделю,
+#и если пользователь в категории, отправить ему все посты за неделю!

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+from Server_auth import SECRET_KEY, EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL, EMAIL_HOST_USER
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,11 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(!u#ll8sgt_#z)c5@wix7t=pinddv34wx02g)1yrzha+_&dmnd'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+SECRET_KEY = SECRET_KEY
 ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['127.0.0.1']
 STATICFILES_DIRS = [
@@ -53,6 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django.contrib.auth', # поддержка авторизации реализуется в виде приложения, автоматически подключаемого к каждому новому проекту
+    'django_apscheduler',
+    
     # 'allauth.socialaccount.providers.agave',
     # 'allauth.socialaccount.providers.amazon',
     # 'allauth.socialaccount.providers.amazon_cognito',
@@ -168,7 +171,25 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.feishu',
 
 ]
+
+# Format string for displaying run time timestamps in the Django admin site. The default
+# just adds seconds to the standard Django format, which is useful for displaying the timestamps
+# for jobs that are scheduled to run on intervals of less than one minute.
+# 
+# See https://docs.djangoproject.com/en/dev/ref/settings/#datetime-format for format string
+# syntax details.
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+# Maximum run time allowed for jobs that are triggered manually via the Django admin site, which
+# prevents admin site HTTP requests from timing out.
+# 
+# Longer running jobs should probably be handed over to a background task processing library
+# that supports multiple background worker processes instead (e.g. Dramatiq, Celery, Django-RQ,
+# etc. See: https://djangopackages.org/grids/g/workers-queues-tasks/ for popular options).
+APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
 SITE_ID = 1 #SITE_ID используется в случае, если данный проект управляет несколькими сайтами, но для нас сейчас это не является принципиальным. Достаточно явно прописать значение 1 для этой переменной.
+
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -298,8 +319,14 @@ ACCOUNT_EMAIL_SUBJECT_PREFIX ="[http://127.0.0.1:8000/news/] "
 
 EMAIL_HOST = 'smtp.gmail.com' # адрес сервера Яндекс-почты для всех один и тот же
 EMAIL_PORT = 465 # порт smtp сервера тоже одинаковый
-EMAIL_HOST_USER = 'lexinet3g' # ваше имя пользователя, например если ваша почта user@yandex.ru, то сюда надо писать user, иными словами, это всё то что идёт до собаки
-EMAIL_HOST_PASSWORD = 'nnuzyzfttepwtiln' # пароль от почты
-EMAIL_USE_SSL = True # Яндекс использует ssl, подробнее о том, что это, почитайте на Википедии, но включать его здесь обязательно
+EMAIL_HOST_USER = EMAIL_HOST_USER # ваше имя пользователя, например если ваша почта user@yandex.ru, то сюда надо писать user, иными словами, это всё то что идёт до собаки
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD # пароль от почты
+EMAIL_USE_SSL = True # использует ssl, подробнее о том, что это, почитайте на Википедии, но включать его здесь обязательно
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = 'lexinet3g@gmail.com' # здесь указываем уже свою ПОЛНУЮ почту с которой будут отправляться письма 
+DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL # здесь указываем уже свою ПОЛНУЮ почту с которой будут отправляться письма 
+
+# # формат даты, которую будет воспринимать наш задачник(вспоминаем урок по фильтрам) 
+# APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+ 
+# # если задача не выполняется за 25 секунд, то она автоматически снимается, можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
+# APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds

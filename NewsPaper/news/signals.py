@@ -10,9 +10,9 @@ from django.shortcuts import redirect
 @receiver(post_save, sender=SubscribersMail) #sender - модель поста, instance - сущность поста который создаётся или сохраняется, created - есть ли такая сущность в бае данных(создаётся или отправляется)
 def notifty_news_publicated(sender, instance, created, **kwargs):   #Функция коллбек - обработчик сигнала!
     if created:
-        subject=f'{instance.subscriber}. Новая статья{instance.category} - {instance.client_title}!',
+        subject=f'{instance.subscriber}. Новая статья{instance.category} - {instance.client_title}! {instance.href}',
     else:
-        subject=f'{instance.subscriber}. Статья изменена {instance.category} - {instance.client_title}!',
+        subject=f'{instance.subscriber}. Статья изменена {instance.category} - {instance.client_title}! {instance.href}',
 
     # получем наш html
     html_content = render_to_string( 

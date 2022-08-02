@@ -44,7 +44,7 @@ class Category(models.Model):
 
 
 
-
+  #user_posts = Post.objects.filter(created_at__gte = date.today()-timedelta(days=7))
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     NEWS = 'NW'
@@ -131,5 +131,6 @@ class SubscribersMail(models.Model): # модель записи - сообще�
     category = models.TextField(default='category_none')
     subscriber = models.TextField(default='subscriber_none')
     subscriber_email = models.TextField(default='support@gmail.com')
+    href = models.TextField(default='')
     def __str__(self):
         return f'{self.client_title}: {self.message}'

@@ -15,7 +15,7 @@ from .filters import NewsFilter # импортируем фильтр
 from .forms import PostForm # импортируем форму
 from django.contrib.auth.mixins import PermissionRequiredMixin #Миксин Ограничение прав доступа
 from django.views.generic.edit import CreateView
-from django.core.mail import EmailMultiAlternatives # импортируем класс для создание объекта письма с html 
+
 from django.template.loader import render_to_string # импортируем функцию, которая срендерит наш html в текст
 from .models import SubscribersMail
 from .exception import *
@@ -166,24 +166,25 @@ class PostAdd(PermissionRequiredMixin, CreateView):
         if request.method == 'POST':
             new_author = Author(authors =User.objects.get(username=request.POST.get('username')))
 
-        print(self,request, )
+        print(self,request )
         return new_author
         
     def post(self, request, *args, **kwargs): # сохраняем запрос
         #author_add()
-        
+        user_posts = Post.objects.filter(created_at__gte = date.today(), author = request.POST['author'])
+        print('WWWWWWWWWWWWWWW - user_posts: ', len(user_posts),user_posts)
+        if len(user_posts) > 3: #лимит в три новости в день на автора
+            return redirect('/news/search')# отправляем пользователя обратно на GET-запрос.
+        post_save_request = super().post(request, *args, **kwargs)
         postCats=request.POST['postCategory']
         subscribersId = SubsCategory.objects.filter(category = postCats).values('subscribers')
         mail_title = request.POST['title']
         mail_text = request.POST['content']
+        link = post_save_request.url
+        print(link, request.POST)
         category = Category.objects.filter(id = postCats).first()
-        #Для лимита в три поста #datetime.date.today()+datetime.timedelta(days=-datetime.date.today().weekday()) 
-        user_posts = Post.objects.filter(created_at__gte = date.today())
-        print('WWWWWWWWWWWWWWW - user_posts: ', len(user_posts),user_posts)
-        if len(user_posts) > 3: #лимит в три новости в день на автора
-            return redirect('/news/search')# отправляем пользователя обратно на GET-запрос.
-        else:
-            post_save_request = super().post(request, *args, **kwargs)
+        #Для лимита в три поста #
+        
         #вытянуть все посты юзера
         #last_posts = list(user_posts)[:3].sort()
         #print('@@@@@!!!!!!!!!!!!last_posts: ',last_posts)
@@ -201,6 +202,7 @@ class PostAdd(PermissionRequiredMixin, CreateView):
                 client_title = mail_title,
                 message= mail_text,
                 category =  category,
+                href = f'http://127.0.0.1:8000' + link,
                 subscriber = SubsUser.username,
                 subscriber_email = SubsUser.email
             )
