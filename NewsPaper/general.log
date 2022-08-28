@@ -2047,3 +2047,4 @@ AttributeError: 'HttpResponseRedirect' object has no attribute 'template_name'
 ***2022-08-27 21:47:49,462 WARNING views WARNING level
 ***2022-08-27 21:47:49,463 ERROR views ERROR level
 ***2022-08-27 21:47:49,463 CRITICAL views CRITICAL level
+***2022-08-28 13:31:38,968 INFO autoreload D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py changed, reloading.
