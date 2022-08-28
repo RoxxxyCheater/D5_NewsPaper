@@ -1,0 +1,153 @@
+***2022-08-27 21:05:49,970 INFO autoreload Watching for file changes with StatReloader
+***2022-08-27 21:05:50,036 INFO views INFO level
+***2022-08-27 21:05:50,037 WARNING views WARNING level
+***2022-08-27 21:05:50,037 ERROR views ERROR level
+***2022-08-27 21:05:50,037 CRITICAL views CRITICAL level
+***2022-08-27 21:06:38,707 INFO autoreload Watching for file changes with StatReloader
+***2022-08-27 21:06:38,775 INFO views INFO level
+***2022-08-27 21:06:38,775 WARNING views WARNING level
+***2022-08-27 21:06:38,776 ERROR views ERROR level
+***2022-08-27 21:06:38,776 CRITICAL views CRITICAL level
+***2022-08-27 21:07:26,322 INFO autoreload D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py changed, reloading.
+***2022-08-27 21:07:26,982 INFO autoreload Watching for file changes with StatReloader
+***2022-08-27 21:07:27,049 INFO views INFO level
+***2022-08-27 21:07:27,049 WARNING views WARNING level
+***2022-08-27 21:07:27,050 ERROR views ERROR level
+***2022-08-27 21:07:27,050 CRITICAL views CRITICAL level
+***2022-08-27 21:07:31,791 INFO autoreload D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py changed, reloading.
+***2022-08-27 21:07:32,439 INFO autoreload Watching for file changes with StatReloader
+***2022-08-27 21:07:32,512 INFO views INFO level
+***2022-08-27 21:07:32,512 WARNING views WARNING level
+***2022-08-27 21:07:32,512 ERROR views ERROR level
+***2022-08-27 21:07:32,513 CRITICAL views CRITICAL level
+***2022-08-27 21:09:14,400 ERROR log Internal Server Error: /assets/img/portfolio/1.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,400 ERROR log Internal Server Error: /assets/img/portfolio/2.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,416 ERROR log Internal Server Error: /assets/img/close-icon.svg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,416 ERROR log Internal Server Error: /assets/img/portfolio/3.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,432 ERROR log Internal Server Error: /assets/img/portfolio/5.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,461 ERROR log Internal Server Error: /assets/img/portfolio/4.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,571 ERROR log Internal Server Error: /assets/img/about/2.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,603 ERROR log Internal Server Error: /assets/img/portfolio/6.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,622 ERROR log Internal Server Error: /assets/img/about/4.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,638 ERROR log Internal Server Error: /assets/img/about/3.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,651 ERROR log Internal Server Error: /assets/img/about/1.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,683 ERROR log Internal Server Error: /assets/img/logos/microsoft.svg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,772 ERROR log Internal Server Error: /assets/img/team/2.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,789 ERROR log Internal Server Error: /assets/img/logos/google.svg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,815 ERROR log Internal Server Error: /assets/img/team/1.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,831 ERROR log Internal Server Error: /assets/img/logos/facebook.svg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,843 ERROR log Internal Server Error: /assets/img/team/3.jpg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:09:14,858 ERROR log Internal Server Error: /assets/img/logos/ibm.svg
+Traceback (most recent call last):
+  File "D:\GD\D5_NewsPaper\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\GD\D5_NewsPaper\NewsPaper\news\middlewares.py", line 28, in __call__
+    response.template_name = template_link + response.template_name[0]
+AttributeError: 'HttpResponseNotFound' object has no attribute 'template_name'
+***2022-08-27 21:22:25,429 INFO autoreload Watching for file changes with StatReloader
+***2022-08-27 21:22:25,494 INFO views INFO level
+***2022-08-27 21:22:25,494 WARNING views WARNING level
+***2022-08-27 21:22:25,494 ERROR views ERROR level
+***2022-08-27 21:22:25,494 CRITICAL views CRITICAL level

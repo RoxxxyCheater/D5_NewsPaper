@@ -15,13 +15,12 @@ from .filters import NewsFilter # импортируем фильтр
 from .forms import PostForm # импортируем форму
 from django.contrib.auth.mixins import PermissionRequiredMixin #Миксин Ограничение прав доступа
 from django.views.generic.edit import CreateView
-
+from django.core.cache import cache # импортируем наш кэш
 from django.template.loader import render_to_string # импортируем функцию, которая срендерит наш html в текст
 from .models import SubscribersMail
 from .exception import *
-
-
-
+import logging
+logger = logging.getLogger(__name__)
 class PostList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
     template_name = 'news_all.html'  # указываем имя шаблона, в котором будет лежать HTML, в нём будут все инструкции о том, как именно пользователю должны вывестись наши объекты
@@ -29,9 +28,16 @@ class PostList(ListView):
     queryset = Post.objects.order_by('-id') # По такому запросу сформируется список объектов, которые будут выводиться в представлении/если не указывать по умолчанию сработает не .order_by('-id'), а .all()
     #ordering = ['-id'] #сортировка от нового к старому
     paginate_by = 10
-    
+
+    logger.debug('DEBUG level')
+    logger.info('INFO level')
+    logger.warning('WARNING level')
+    logger.error('ERROR level')
+    logger.critical('CRITICAL level')
+
     def get_context_data(self, **kwargs): # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет, полиморфизм, мы скучали!!!)
         context = super().get_context_data(**kwargs)
+        
         return context    
     
     def get_context_data(self, **kwargs): #переопределяем метод получения контекста
@@ -49,10 +55,22 @@ class PostList(ListView):
         return context #возвращаем контекст обратно
 
 
-class PostDetail(DetailView): # адресс в котором будет лежать информация о конкретном товаре
+class PostDetail(DetailView): # адресс в котором будет лежать информация о конкретной новости
     model = Post
     template_name ='news.html'
     context_object_name = 'news'
+    queryset = Post.objects.all()
+
+    def get_object(self, *args, **kwargs): # переопределяем метод получения объекта, как ни странно
+        obj = cache.get(f'{self.kwargs["pk"]}', None) # кэш очень похож на словарь, и метод get действует также. Он забирает значение по ключу, если его нет, то забирает None.
+ 
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset) 
+            cache.set(f'{self.kwargs["pk"]}', obj)
+            
+        return obj
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -80,6 +98,9 @@ class PostDetail(DetailView): # адресс в котором будет леж
                 context['authors'] = Author.objects.all()
             
         return context
+
+
+
 
 
 class Posts(ListView):

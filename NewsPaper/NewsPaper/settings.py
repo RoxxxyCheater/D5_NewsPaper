@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+
 from pathlib import Path
 import os
 from Server_auth import SECRET_KEY, EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL, EMAIL_HOST_USER
@@ -209,15 +210,23 @@ ACCOUNT_EMAIL_CONFIRMATION_COOLDOWN = 180
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.security.SecurityMiddleware', #Слой безопасности SecurityMiddleware должен находиться как можно выше в списке, чтобы отсеивать запросы, нарушающие безопасность, и не тратить время на их обработку.
+    'django.contrib.sessions.middleware.SessionMiddleware', #SessionMiddleware должен вызываться перед слоями, которые связаны с авторизацией, и могут вызвать исключения типа PermissionDenied.
+    'django.middleware.common.CommonMiddleware', #CommonMiddleware должен запускаться перед слоями, которые могут изменить ответ на запрос.
+    'django.middleware.csrf.CsrfViewMiddleware', #Слои CsrfViewMiddleware, AuthenticationMiddleware, MessageMiddleware должны находиться строго после слоя сессий SessionMiddleware.
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'news.middlewares.ViewVersionMiddleware',
 ]
+
+    #Кэширующий слой должен находиться до слоев, связанных с сессиями, куки и слоем локализации.
+    #LocaleMiddleware также должен находиться как можно выше, но обязательно после кэширующего слоя и слоя сессий.
+    
+
+
+
 
 ROOT_URLCONF = 'NewsPaper.urls'
 
@@ -330,3 +339,148 @@ DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL # здесь указываем уже �
  
 # # если задача не выполняется за 25 секунд, то она автоматически снимается, можете поставить время побольше, но как правило, это сильно бьёт по производительности сервера
 # APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+    }
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': { #записывать информацию согласно определенным форматам.
+        'console_form': {
+            'format': '***{asctime} {levelname} [{message}]',
+            'style': '{'
+        },
+        'console_form_warn': {
+            'format': '***{asctime} {levelname} [{message}] [{pathname}]',
+            'style': '{'
+        },
+        'console_form_error': {
+            'format': '***{asctime} {levelname} [{message}] [{pathname}] {exc_info}',
+            'style': '{'
+        },
+        'gen_sec_mail_form': {
+            'format': '***{asctime} {levelname} {module} {message}',
+            'style': '{'
+        },   
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'ERROR', 
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_form_error'
+        },
+        'console': {
+            'level': 'WARNING', 
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_form_warn'
+        },
+        'console': {
+            'level': 'INFO', 
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'console_form'
+        },
+        'general_log': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'formatter': 'gen_sec_mail_form',
+            'filename': 'NewsPaper/general.log',
+        },
+        'error_log': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'formatter': 'console_form_error',
+            'filename': 'NewsPaper/error.log'
+        },
+        'security_log': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'gen_sec_mail_form',
+            'filename': 'NewsPaper/security.log' 
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+            'formatter': 'gen_sec_mail_form'
+        }
+
+    },
+    'loggers': { 
+        'news': {
+            'handlers': ['console', 'general_log'],
+            'level': 'DEBUG', 
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['console', 'general_log'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request':{
+            'handlers': ['error_log', 'mail_admins'],
+            'level': 'ERROR',
+        },
+        'django.server':{
+            'handlers': ['error_log', 'mail_admins'],
+            'level': 'ERROR',
+        },
+        'django.template':{
+            'handlers': ['error_log'],
+            'level': 'ERROR',
+        },
+        'django.db_backends': {
+            'handlers': ['error_log'],
+            'level': 'ERROR',
+        },
+        'django.security': {
+            'handlers': ['security_log'],
+            'propagate': False,
+        }
+    }
+}
+
+#+ В консоль должны выводиться все сообщения уровня DEBUG и выше
+#+ Формат время, уровень сообщения, сообщения
+# Для сообщений WARNING и выше дополнительно должен выводиться путь к источнику события (используется аргумент pathname в форматировании).
+# ERROR и CRITICAL еще должен выводить стэк ошибки (аргумент exc_info).
+# а должны попадать все сообщения с основного логгера django.
+
+
+# В файл general.log сообщения уровня INFO и выше + сообщения с регистратора django
+# формат времени, уровня логирования, модуля(аргумент module) и сообщение.
+# + сообщения с регистратора django
+
+
+# В файл errors.log только уровня ERROR и CRITICAL.
+# формат время, уровень логирования, сообщение, путь к источнику сообщения и стэк ошибки.
+# В файл errors.log сообщения только из логгеров django.request, django.server, django.template, django.db_backends.
+
+
+# В файл security.log сообщения только из логгера django.security.
+# Формат:  время, уровень логирования, модуль и сообщение.
+
+
+# На почту: сообщения уровней ERROR и выше из django.request и django.server,
+# формат: время, уровень логирования, модуль и сообщение.
+# 
+# 
+#+ в консоль сообщения о тправляются только при DEBUG = True,
+# а на почту и в файл general.log только при DEBUG = False.
+

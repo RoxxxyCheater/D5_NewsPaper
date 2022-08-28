@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.core.cache import cache
 
 class Author(models.Model):
     authors = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -66,10 +67,19 @@ class Post(models.Model):
     def __str__(self):
         return '%s %s %s %s %s %s' % (self.created_at, self.author.authors.username, self.author.rateAuthor, self.title, self.content, self.preview())
     
-
+    # допишем свойство, которое будет отображать есть ли товар на складе
+    @property
+    def rate_plus(self):
+        return self.postRate > 0
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'/news/{self.pk}') # затем удаляем его из кэша, чтобы сбросить его
+    
     def like(self):
         self.postRate += 1
         self.save()
+
     def dislike(self):
         self.postRate -= 1
         self.save()

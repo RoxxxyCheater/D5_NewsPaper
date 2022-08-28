@@ -16,7 +16,7 @@ from news.models import *
 ############################################################################
 #python manage.py shell
 ############################################################################
-from news.models import *
+#from news.models import *
 ############################################################################
 user1 = User.objects.create(username='Alex')
 user2 = User.objects.create(username='Slavik')

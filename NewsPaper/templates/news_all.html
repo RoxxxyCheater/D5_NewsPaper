@@ -1,11 +1,18 @@
 {% extends 'flatpages/default.html' %}
 
-<!-- {% load custom_filters %} -->
+{% load custom_filters %}
 
-{% block title %}
-News Page
-{% endblock title %}
- 
+
+{% load cache %} <!-- Загружаем кэширование -->
+    {% cache 30 title %} <!-- Кэшируем отдельный блок на 30 секунд -->
+        {% block title %}
+            News Pages
+        {% endblock title %}
+    {% endcache %}
+    {% cache 30 nav %} <!-- Кэшируем отдельный блок на 30 секунд -->
+        {% block nav %}
+        {% endblock nav %}
+    {% endcache %}
 {% block content %}
     <h1>Все новости</h1>
     <h3>{{ news_all | length }}</h3>
